@@ -1,3 +1,6 @@
+To run this example, please clone this repository and then run the command
+`npm start`.
+
 This project demonstrates an issue encountered when using the 'AutoComplete'
 component from 'redux-form-material-ui':
 After selection of an item in the AutoComplete menu, the TextField is "fixed" -
