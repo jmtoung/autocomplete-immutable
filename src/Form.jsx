@@ -6,7 +6,43 @@ import {
   TextField,
 } from 'redux-form-material-ui';
 
+const countries = [
+    {value: 'AF', text: 'Afghanistan'},
+    {value: 'AR', text: 'Argentina'},
+    {value: 'BE', text: 'Belgium'},
+    {value: 'BR', text: 'Brazil'},
+    {value: 'CA', text: 'Canada'},
+    {value: 'CN', text: 'China'},
+    {value: 'DK', text: 'Denmark'},
+    {value: 'EG', text: 'Egypt'},
+    {value: 'FI', text: 'Finland'},
+    {value: 'FR', text: 'France'},
+];
+
 class Form extends Component {
+
+  componentWillMount() {
+      this.createMaps();
+  };
+
+  createMaps = () => {
+      this.countries = [];
+      this.countryNameToCode = {};
+      this.countryCodeToName = {};
+      for (const country of countries) {
+          this.countries.push(country.text)
+          this.countryNameToCode[country.text] = country.value;
+          this.countryCodeToName[country.value] = country.text;
+      }
+  };
+
+  formatCountry = (value, name) => {
+      return this.countryCodeToName[value] || value;
+  };
+
+  parseCountry = (value, name) => {
+      return this.countryNameToCode[value] || value;
+  };
 
   render() {
     return (
@@ -29,19 +65,9 @@ class Form extends Component {
             floatingLabelFixed
             openOnFocus
             filter={MUIAutoComplete.fuzzyFilter}
-            dataSourceConfig={{ value: 'value', text: 'text' }}
-            dataSource={[
-              {value: 'AF', text: 'Afghanistan'},
-              {value: 'AR', text: 'Argentina'},
-              {value: 'BE', text: 'Belgium'},
-              {value: 'BR', text: 'Brazil'},
-              {value: 'CA', text: 'Canada'},
-              {value: 'CN', text: 'China'},
-              {value: 'DK', text: 'Denmark'},
-              {value: 'EG', text: 'Egypt'},
-              {value: 'FI', text: 'Finland'},
-              {value: 'FR', text: 'France'},
-            ]}
+            format={this.formatCountry}
+            parse={this.parseCountry}
+            dataSource={this.countries}
           />
         </div>
       </div>
