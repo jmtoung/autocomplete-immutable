@@ -5,18 +5,49 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 import { combineReducers } from 'redux-immutable';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import { reducer } from 'redux-form/immutable';
+import { fromJS } from 'immutable';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Addresses from './reducer';
+
+function logger({ getState }) {
+  return next => (action) => {
+    console.log('will dispatch', action);
+
+    // Call the next dispatch method in the middleware chain.
+    const returnValue = next(action);
+
+    console.log('state after dispatch', getState());
+
+    // This will likely be the action itself, unless
+    // a middleware further in chain changed it.
+    return returnValue;
+  };
+}
 
 const rootReducer = combineReducers({
-  form: reducer
-})
+  Addresses,
+  form: reducer,
+});
+
+const initialState = fromJS({
+  Addresses: {
+    countries: [],
+  }
+});
 
 const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  initialState,
+  compose(
+    composeWithDevTools(
+      applyMiddleware(thunk, logger)
+    ),
+  ),
 );
 
 ReactDOM.render(
