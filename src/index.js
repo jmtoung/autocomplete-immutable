@@ -12,6 +12,7 @@ import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import { reducer } from 'redux-form/immutable';
 import { fromJS } from 'immutable';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import Addresses from './reducer';
 
 function logger({ getState }) {
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
 const initialState = fromJS({
   Addresses: {
     countries: [],
+    cities: [],
   }
 });
 
@@ -49,6 +51,8 @@ const store = createStore(
     ),
   ),
 );
+
+injectTapEventPlugin();
 
 ReactDOM.render(
   <MuiThemeProvider>
