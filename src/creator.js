@@ -17,7 +17,7 @@ function retrieveCountries() {
   return new Promise((resolve, reject) => {
     setTimeout(function() {
       resolve(countries);
-    }, 2000)
+    }, 500)
   });
 }
 
@@ -93,7 +93,7 @@ function retrieveCities(country) {
   return new Promise((resolve, reject) => {
     setTimeout(function() {
       resolve(cities[country]);
-    }, 2000)
+    }, 500)
   });
 }
 

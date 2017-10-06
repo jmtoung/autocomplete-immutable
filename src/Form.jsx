@@ -85,22 +85,19 @@ class Form extends Component {
     if (this.props.countries.size === 0 && nextProps.countries.size > 0) {
       this.initializeCountryValues(nextProps.countries);
     }
+    // If the cities passed down to prop changes, we need to
+    // reinitialize the city maps and also run a validation
+    // to make sure that the selected city (if any) is correct.
     if (this.props.cities !== nextProps.cities) {
-      console.log('initializing city values');
       this.initializeCityValues(nextProps.cities);
-      console.log('this.props.selectedCityCode: ' + this.props.selectedCityCode);
-      console.log('this.citiesList: ');
-      console.log(this.citiesList);
-
       if (this.props.selectedCityCode && !(this.props.selectedCityCode in this.cityCodeToName)) {
-        console.log('invalid city code');
-        this.props.change('dummy', 'blah');
+        // Need to call this change in order to trigger validation.
+        this.props.change('dummy', !this.props.dummy);
       }
     }
-    // console.log('current country code: ' + this.props.selectedCountryCode);
-    // console.log('next country code: ' + nextProps.selectedCountryCode);
-    if (this.props.selectedCountryCode !== nextProps.selectedCountryCode && nextProps.selectedCountryCode !== '') {
-      console.log('changing country code from ' + this.props.selectedCountryCode + ' to ' + nextProps.selectedCountryCode);
+    // If the country code changes we need to re-query the server
+    // for the appropriate cities.
+    if (this.props.selectedCountryCode !== nextProps.selectedCountryCode) {
       this.props.getCities(nextProps.selectedCountryCode);
     }
   }
@@ -125,6 +122,8 @@ class Form extends Component {
     if (value in this.countryNameToCode) {
       const countryCode = this.countryNameToCode[value]
       this.props.change('country_code', countryCode);
+      // TODO: Ask, was it good to move the following line
+      // to "componentWillReceiveProps()"?
       //this.props.getCities(countryCode);
     }
   }
@@ -216,6 +215,7 @@ const mapStateToProps = state => ({
   cities: state.getIn(['Addresses', 'cities']),
   selectedCountryCode: state.getIn(['form', 'user', 'values', 'country_code']),
   selectedCityCode: state.getIn(['form', 'user', 'values', 'city_code']),
+  dummy: state.getIn(['form', 'user', 'values', 'dummy']),
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
