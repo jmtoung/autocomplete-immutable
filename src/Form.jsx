@@ -8,6 +8,7 @@ import {
   TextField,
 } from 'redux-form-material-ui';
 import { getCountries, getCities } from './creator';
+import { isEqual } from 'lodash';
 
 class Form extends Component {
 
@@ -19,8 +20,8 @@ class Form extends Component {
     // If the cities passed down to prop changes, we need to
     // reinitialize the city maps and also run a validation
     // to make sure that the selected city (if any) is correct.
-    if (this.props.cities !== nextProps.cities) {
-      if (this.props.selectedCityCode && !(this.props.selectedCityCode in nextProps.cityCodeToName)) {
+    if (this.props.cities && !isEqual(this.props.cities, nextProps.cities)) {
+      if (this.props.selectedCityName && !(this.props.selectedCityCode in nextProps.cityCodeToName)) {
         // Need to call this change in order to trigger validation.
         this.props.change('dummy', !this.props.dummy);
       }
@@ -34,24 +35,25 @@ class Form extends Component {
 
   parseCountry = (value, name) => {
     if (value in this.props.countryNameToCode) {
-      this.props.blur('country_name');
-      this.props.change('country_code', this.props.countryNameToCode[value]);
+      this.props.blur('countryName');
+      this.props.change('countryCode', this.props.countryNameToCode[value]);
     }
     return value;
   }
 
   parseCity = (value, name) => {
+    this.props.blur('cityName');
     if (value in this.props.cityNameToCode) {
-      this.props.change('city_code', this.props.cityNameToCode[value]);
+      this.props.change('cityCode', this.props.cityNameToCode[value]);
     }
     return value;
   }
 
   onNewCountryRequest = value => {
-    this.props.blur('country_name');
+    this.props.blur('countryName');
     if (value in this.props.countryNameToCode) {
       const countryCode = this.props.countryNameToCode[value]
-      this.props.change('country_code', countryCode);
+      this.props.change('countryCode', countryCode);
       // TODO: Ask, was it good to move the following line
       // to "componentWillReceiveProps()"?
       //this.props.getCities(countryCode);
@@ -59,10 +61,10 @@ class Form extends Component {
   }
 
   onNewCityRequest = value => {
-    this.props.blur('city_name');
+    this.props.blur('cityName');
     if (value in this.props.cityNameToCode) {
       const cityCode = this.props.cityNameToCode[value]
-      this.props.change('city_code', cityCode);
+      this.props.change('cityCode', cityCode);
     }
   }
 
@@ -74,7 +76,8 @@ class Form extends Component {
   }
 
   isValidCity = (value, allValues, props) => {
-    if (value && !(value in this.props.cityNameToCode)) {
+    console.log('validating ' + value);
+    if (value && this.props.citiesList.length > 0 && !(value in this.props.cityNameToCode)) {
       return 'Invalid City';
     }
     return undefined;
@@ -92,7 +95,7 @@ class Form extends Component {
             type="text"
           />
         </div>
-        <div className="modal-container">
+        <div className="modal-container" style={{ display: 'none' }}>
           <div className="modal-item">
             <Field
               name="dummy"
@@ -106,7 +109,7 @@ class Form extends Component {
 
         <div className="modal-item">
           <Field
-            name="country_name"
+            name="countryName"
             component={AutoComplete}
             floatingLabelText="Country"
             floatingLabelFixed
@@ -114,14 +117,13 @@ class Form extends Component {
             filter={MUIAutoComplete.fuzzyFilter}
             parse={this.parseCountry}
             onNewRequest={this.onNewCountryRequest}
-            //dataSourceConfig={{text: 'text', value: 'value'}}
             dataSource={this.props.countriesList}
             validate={this.isValidCountry}
           />
         </div>
         <div className="modal-item">
           <Field
-            name="city_name"
+            name="cityName"
             component={AutoComplete}
             floatingLabelText="City"
             floatingLabelFixed
@@ -129,7 +131,6 @@ class Form extends Component {
             filter={MUIAutoComplete.fuzzyFilter}
             parse={this.parseCity}
             onNewRequest={this.onNewCityRequest}
-            //dataSourceConfig={{text: 'text', value: 'value'}}
             dataSource={this.props.citiesList}
             validate={this.isValidCity}
           />
@@ -174,14 +175,22 @@ const mapStateToProps = state => {
     citiesList,
     cityNameToCode,
     cityCodeToName,
-    selectedCountryCode: state.getIn(['form', 'user', 'values', 'country_code']),
-    selectedCityCode: state.getIn(['form', 'user', 'values', 'city_code']),
+    selectedCountryCode: state.getIn(['form', 'user', 'values', 'countryCode']),
+    selectedCityCode: state.getIn(['form', 'user', 'values', 'cityCode']),
+    selectedCityName: state.getIn(['form', 'user', 'values', 'cityName']),
     dummy: state.getIn(['form', 'user', 'values', 'dummy']),
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  getCountries, getCities }, dispatch);
+const mapDispatchToProps = dispatch => {
+  return {
+    ...bindActionCreators({
+      getCountries,
+      getCities,
+    }, dispatch),
+    dispatch
+  };
+};
 
 Form = connect(
   mapStateToProps,
@@ -192,10 +201,10 @@ export default reduxForm({
   form: 'user',
   initialValues: {
     name: '',
-    country_name: '',
-    country_code: '',
-    city_name: '',
-    city_code: '',
+    countryName: '',
+    countryCode: '',
+    cityName: '',
+    cityCode: '',
     dummy: '',
   },
 })(Form);

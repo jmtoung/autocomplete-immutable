@@ -1,4 +1,3 @@
-
 function retrieveCountries() {
   const countries = [
       {value: 'AF', text: 'Afghanistan'},
@@ -11,6 +10,7 @@ function retrieveCountries() {
       {value: 'EG', text: 'Egypt'},
       {value: 'FI', text: 'Finland'},
       {value: 'FR', text: 'France'},
+      {value: 'IT', text: 'Italy'}, // Country with no corresponding city
       {value: 'US', text: 'United States'},
   ];
 
@@ -92,7 +92,11 @@ function retrieveCities(country) {
 
   return new Promise((resolve, reject) => {
     setTimeout(function() {
-      resolve(cities[country]);
+      let citiesList = [];
+      if (country in cities) {
+        citiesList = cities[country];
+      }
+      resolve(citiesList);
     }, 500)
   });
 }
