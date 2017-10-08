@@ -39,6 +39,9 @@ const initialState = fromJS({
   Addresses: {
     countries: [],
     states: [],
+    usCity: '',
+    usState: '',
+    phoneCodes: [],
   }
 });
 

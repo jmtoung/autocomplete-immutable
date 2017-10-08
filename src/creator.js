@@ -65,3 +65,42 @@ export function getStates(country) {
     dispatch(getStatesSuccess(response));
   };
 }
+
+export function retrieveUsCityState(zipCode) {
+  const cityStates = {
+    '94306': { state: 'CA', city: 'Palo Alto'},
+    '07960': { state: 'NJ', city: 'Morristown'},
+    '00000': { state: 'ZZ', city: 'Fakeville'}, // A zipcode that doesn't match a proper state.
+  };
+
+  return new Promise((resolve, reject) => {
+    setTimeout(function() {
+      let cityState = {};
+      if (zipCode in cityStates) {
+        cityState = cityStates[zipCode];
+      }
+      resolve(cityState);
+    }, 500)
+  });
+}
+
+export function getUsCityStateSuccess(cityState) {
+  return {
+    type: 'GET_STATES_SUCCESS',
+    cityState
+  }
+}
+
+export function getUsCityState(zipcode) {
+  return async (dispatch) => {
+    const response = await retrieveUsCityState(zipcode);
+    dispatch(getUsCityStateSuccess(response));
+  }
+}
+
+export function getPhoneCodes(countries) {
+  return {
+    type: 'GET_PHONE_CODES',
+    countries,
+  }
+}
