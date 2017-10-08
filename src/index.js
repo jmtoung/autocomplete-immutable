@@ -1,19 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { combineReducers } from 'redux-immutable';
+/* eslint-disable import/no-extraneous-dependencies */
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import { reducer } from 'redux-form/immutable';
 import { fromJS } from 'immutable';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+
+import './index.css';
 import Addresses from './reducer';
+import App from './App';
+import registerServiceWorker from './registerServiceWorker';
+
 
 function logger({ getState }) {
   return next => (action) => {
@@ -53,6 +56,7 @@ const store = createStore(
 
 injectTapEventPlugin();
 
+/* eslint-disable react/jsx-filename-extension */
 ReactDOM.render(
   <MuiThemeProvider>
     <Provider store={store}>

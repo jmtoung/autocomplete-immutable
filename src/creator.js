@@ -5,7 +5,7 @@ function retrieveCountries() {
     { value: 'US', text: 'United States' },
   ];
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(countries);
     }, 500);
@@ -41,7 +41,7 @@ function retrieveStates(country) {
     ],
   };
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       let statesList = [];
       if (country in states) {
@@ -73,7 +73,7 @@ export function retrieveUsCityState(zipCode) {
     '00000': { state: 'ZZ', city: 'Fakeville' }, // A zipcode that doesn't match a proper state.
   };
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       let cityState = {};
       if (zipCode in cityStates) {

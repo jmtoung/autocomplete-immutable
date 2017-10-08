@@ -16,11 +16,12 @@ export default function Addresses(state, action) {
     }
     case 'GET_PHONE_CODES': {
       const phoneCodes = [];
-      for (let i = 0; i < action.countries.length; i++) {
+      for (let i = 0; i < action.countries.length; i += 1) {
+        let phoneCode;
         try {
-          var phoneCode = getPhoneCode(action.countries[i].value);
+          phoneCode = getPhoneCode(action.countries[i].value);
         } catch (e) {
-          continue;
+          phoneCode = '';
         }
         const phoneCodeObj = {
           value: action.countries[i].value,
