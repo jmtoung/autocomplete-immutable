@@ -38,7 +38,7 @@ const rootReducer = combineReducers({
 const initialState = fromJS({
   Addresses: {
     countries: [],
-    cities: [],
+    states: [],
   }
 });
 

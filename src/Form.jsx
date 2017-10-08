@@ -7,7 +7,7 @@ import {
   AutoComplete,
   TextField,
 } from 'redux-form-material-ui';
-import { getCountries, getCities } from './creator';
+import { getCountries, getStates } from './creator';
 import { isEqual } from 'lodash';
 
 class Form extends Component {
@@ -17,19 +17,19 @@ class Form extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    // If the cities passed down to prop changes, we need to
-    // reinitialize the city maps and also run a validation
-    // to make sure that the selected city (if any) is correct.
-    if (this.props.cities && !isEqual(this.props.cities, nextProps.cities)) {
-      if (this.props.selectedCityName && !(this.props.selectedCityCode in nextProps.cityCodeToName)) {
+    // If the states passed down to prop changes, we need to
+    // reinitialize the state maps and also run a validation
+    // to make sure that the selected state (if any) is correct.
+    if (this.props.states && !isEqual(this.props.states, nextProps.states)) {
+      if (this.props.selectedStateName && !(this.props.selectedStateCode in nextProps.stateCodeToName)) {
         // Need to call this change in order to trigger validation.
         this.props.change('dummy', !this.props.dummy);
       }
     }
     // If the country code changes we need to re-query the server
-    // for the appropriate cities.
+    // for the appropriate states.
     if (this.props.selectedCountryCode !== nextProps.selectedCountryCode) {
-      this.props.getCities(nextProps.selectedCountryCode);
+      this.props.getStates(nextProps.selectedCountryCode);
     }
   }
 
@@ -41,10 +41,10 @@ class Form extends Component {
     return value;
   }
 
-  parseCity = (value, name) => {
-    this.props.blur('cityName');
-    if (value in this.props.cityNameToCode) {
-      this.props.change('cityCode', this.props.cityNameToCode[value]);
+  parseState = (value, name) => {
+    this.props.blur('stateName');
+    if (value in this.props.stateNameToCode) {
+      this.props.change('stateCode', this.props.stateNameToCode[value]);
     }
     return value;
   }
@@ -56,15 +56,15 @@ class Form extends Component {
       this.props.change('countryCode', countryCode);
       // TODO: Ask, was it good to move the following line
       // to "componentWillReceiveProps()"?
-      //this.props.getCities(countryCode);
+      //this.props.getStates(countryCode);
     }
   }
 
-  onNewCityRequest = value => {
-    this.props.blur('cityName');
-    if (value in this.props.cityNameToCode) {
-      const cityCode = this.props.cityNameToCode[value]
-      this.props.change('cityCode', cityCode);
+  onNewStateRequest = value => {
+    this.props.blur('stateName');
+    if (value in this.props.stateNameToCode) {
+      const stateCode = this.props.stateNameToCode[value]
+      this.props.change('stateCode', stateCode);
     }
   }
 
@@ -75,10 +75,9 @@ class Form extends Component {
     return undefined;
   }
 
-  isValidCity = (value, allValues, props) => {
-    console.log('validating ' + value);
-    if (value && this.props.citiesList.length > 0 && !(value in this.props.cityNameToCode)) {
-      return 'Invalid City';
+  isValidState = (value, allValues, props) => {
+    if (value && this.props.statesList.length > 0 && !(value in this.props.stateNameToCode)) {
+      return 'Invalid State';
     }
     return undefined;
   }
@@ -95,16 +94,14 @@ class Form extends Component {
             type="text"
           />
         </div>
-        <div className="modal-container" style={{ display: 'none' }}>
-          <div className="modal-item">
-            <Field
-              name="dummy"
-              component={TextField}
-              floatingLabelText="Dummy"
-              floatingLabelFixed
-              type="text"
-            />
-          </div>
+        <div className="modal-item" style={{ display: 'none' }}>
+          <Field
+            name="dummy"
+            component={TextField}
+            floatingLabelText="Dummy"
+            floatingLabelFixed
+            type="text"
+          />
         </div>
 
         <div className="modal-item">
@@ -123,16 +120,25 @@ class Form extends Component {
         </div>
         <div className="modal-item">
           <Field
-            name="cityName"
+            name="postalCode"
+            component={TextField}
+            floatingLabelText="Postal Code"
+            floatingLabelFixed
+            type="text"
+          />
+        </div>
+        <div className="modal-item">
+          <Field
+            name="stateName"
             component={AutoComplete}
-            floatingLabelText="City"
+            floatingLabelText="State"
             floatingLabelFixed
             openOnFocus
             filter={MUIAutoComplete.fuzzyFilter}
-            parse={this.parseCity}
-            onNewRequest={this.onNewCityRequest}
-            dataSource={this.props.citiesList}
-            validate={this.isValidCity}
+            parse={this.parseState}
+            onNewRequest={this.onNewStateRequest}
+            dataSource={this.props.statesList}
+            validate={this.isValidState}
           />
         </div>
 
@@ -154,16 +160,16 @@ const mapStateToProps = state => {
     countryCodeToName[value] = text;
   }
 
-  const cities = state.getIn(['Addresses', 'cities']).toJS();
-  const citiesList = [];
-  const cityNameToCode = {};
-  const cityCodeToName = {};
-  for (const city of cities) {
-    const text = city.text;
-    const value = city.value;
-    citiesList.push(text);
-    cityNameToCode[text] = value;
-    cityCodeToName[value] = text;
+  const states = state.getIn(['Addresses', 'states']).toJS();
+  const statesList = [];
+  const stateNameToCode = {};
+  const stateCodeToName = {};
+  for (const state of states) {
+    const text = state.text;
+    const value = state.value;
+    statesList.push(text);
+    stateNameToCode[text] = value;
+    stateCodeToName[value] = text;
   }
 
   return {
@@ -171,13 +177,13 @@ const mapStateToProps = state => {
     countriesList,
     countryNameToCode,
     countryCodeToName,
-    cities,
-    citiesList,
-    cityNameToCode,
-    cityCodeToName,
+    states,
+    statesList,
+    stateNameToCode,
+    stateCodeToName,
     selectedCountryCode: state.getIn(['form', 'user', 'values', 'countryCode']),
-    selectedCityCode: state.getIn(['form', 'user', 'values', 'cityCode']),
-    selectedCityName: state.getIn(['form', 'user', 'values', 'cityName']),
+    selectedStateCode: state.getIn(['form', 'user', 'values', 'stateCode']),
+    selectedStateName: state.getIn(['form', 'user', 'values', 'stateName']),
     dummy: state.getIn(['form', 'user', 'values', 'dummy']),
   };
 };
@@ -186,7 +192,7 @@ const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators({
       getCountries,
-      getCities,
+      getStates,
     }, dispatch),
     dispatch
   };
@@ -203,8 +209,8 @@ export default reduxForm({
     name: '',
     countryName: '',
     countryCode: '',
-    cityName: '',
-    cityCode: '',
+    stateName: '',
+    stateCode: '',
     dummy: '',
   },
 })(Form);

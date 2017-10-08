@@ -6,8 +6,8 @@ export default function Addresses(state, action) {
     case 'GET_COUNTRIES_SUCCESS': {
       return state.merge({ countries: fromJS(action.countries) });
     }
-    case 'GET_CITIES_SUCCESS': {
-      return state.merge({ cities: fromJS(action.cities) });
+    case 'GET_STATES_SUCCESS': {
+      return state.merge({ states: fromJS(action.states) });
     }
     default:
       return state;
