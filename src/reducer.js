@@ -11,25 +11,25 @@ export default function Addresses(state, action) {
     }
     case 'GET_US_CITY_STATE_SUCCESS': {
       return state
-      .merge({ usCity: action.cityState.city })
-      .merge({ usState: action.cityState.state });
+        .merge({ usCity: action.cityState.city })
+        .merge({ usState: action.cityState.state });
     }
     case 'GET_PHONE_CODES': {
-      let phoneCodes = [];
-      for (var i = 0; i < action.countries.length; i++) {
+      const phoneCodes = [];
+      for (let i = 0; i < action.countries.length; i++) {
         try {
           var phoneCode = getPhoneCode(action.countries[i].value);
-        } catch(e) {
+        } catch (e) {
           continue;
         }
         const phoneCodeObj = {
           value: action.countries[i].value,
-          text: '+' + phoneCode + ' (' + action.countries[i].text + ')',
+          text: `+${phoneCode} (${action.countries[i].text})`,
         };
         phoneCodes.push(phoneCodeObj);
-      } 
+      }
       return state
-      .merge({ phoneCodes });
+        .merge({ phoneCodes });
     }
     default:
       return state;

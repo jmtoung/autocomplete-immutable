@@ -42,17 +42,13 @@ const initialState = fromJS({
     usCity: '',
     usState: '',
     phoneCodes: [],
-  }
+  },
 });
 
 const store = createStore(
   rootReducer,
   initialState,
-  compose(
-    composeWithDevTools(
-      applyMiddleware(thunk, logger)
-    ),
-  ),
+  compose(composeWithDevTools(applyMiddleware(thunk, logger))),
 );
 
 injectTapEventPlugin();
@@ -63,6 +59,6 @@ ReactDOM.render(
       <App />
     </Provider>
   </MuiThemeProvider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 registerServiceWorker();
