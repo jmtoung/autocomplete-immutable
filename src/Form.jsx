@@ -46,6 +46,7 @@ class Form extends Component {
     // appropriate states.
     if (this.props.selectedCountryCode !== nextProps.selectedCountryCode) {
       this.props.getStates(nextProps.selectedCountryCode);
+      this.props.change('dummy', !this.props.dummy);
     }
 
     // Right after we are entering a valid postal code, we need to retrieve the
