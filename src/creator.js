@@ -1,5 +1,6 @@
 function retrieveCountries() {
   const countries = [
+    { value: 'CA', text: 'Canada' },
     { value: 'FR', text: 'France' },
     { value: 'IT', text: 'Italy' }, // Country with no corresponding city
     { value: 'US', text: 'United States' },

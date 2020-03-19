@@ -261,7 +261,6 @@ class Form extends Component {
             parse={this.parsePhoneNumber}
             format={this.formatPhoneNumber}
             validate={this.isValidPhoneNumber}
-            onChange={this.onUpdatePhoneNumber}
             type="text"
           />
         </div>
